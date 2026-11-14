@@ -1,0 +1,4 @@
+*.swp
+*.swo
+tests/.last-request.json
+tests/.last-request.json.meta
