@@ -1,0 +1,83 @@
+*aski.txt*  Ask an LLM about selected text
+
+==============================================================================
+ASKI                                                                    *aski*
+
+Aski sends a visual selection and a question to an OpenAI-compatible chat
+model, then streams the answer into a scratch buffer. It is plain Lua. The
+only external requirement is curl.
+
+Neovim 0.10 or newer is required.
+
+==============================================================================
+USAGE                                                             *aski-usage*
+
+Visually select text and press <leader>aq. A scratch buffer opens with the
+selection at the top and a question line under it. Type a question and press
+Enter. The answer streams in below the question.
+
+`q` closes the buffer. Ctrl-C cancels a request that is still running, and
+closes the buffer when nothing is running. Edit the question and press Enter
+again to ask something else about the same selection.
+
+							*:Aski*
+:{range}Aski		Ask about the lines in {range}. Without a range this
+			is the current line. The visual mapping keeps a
+			character-wise or block selection; :Aski is line-wise.
+
+							*<Plug>(AskiAsk)*
+<Plug>(AskiAsk)		Visual-mode mapping that opens Aski for the current
+			selection.
+
+The default visual mapping is <leader>aq. Set |g:aski_no_mappings| before the
+plugin loads to skip it, or pass `keymap = false` to |aski.setup()|.
+
+							*g:aski_no_mappings*
+g:aski_no_mappings	When set to 1 before startup, Aski does not create
+			<leader>aq.
+
+==============================================================================
+SETUP                                                             *aski-setup*
+
+>lua
+    require("aski").setup({
+      model = "gpt-4o-mini",
+      base_url = "https://api.openai.com/v1",
+      api_key = "",
+      max_tokens = 1024,
+      timeout_ms = 120000,
+      keymap = "<leader>aq",
+    })
+<
+
+`base_url` is the OpenAI-compatible origin, including `/v1`. Aski posts to
+`{base_url}/chat/completions`. An empty `api_key` is fine for a local server.
+The official OpenAI host requires a key.
+
+Environment variables apply when the matching option was not passed to
+setup():
+
+	ASKI_API_KEY		Preferred API key
+	OPENAI_API_KEY		Used when ASKI_API_KEY is unset
+	ASKI_BASE_URL		Overrides the default base URL
+	ASKI_MODEL		Overrides the default model
+
+A local Ollama server: >lua
+    require("aski").setup({
+      base_url = "http://127.0.0.1:11434/v1",
+      model = "llama3.2",
+      api_key = "",
+    })
+<
+
+==============================================================================
+NOTES                                                             *aski-notes*
+
+Requests run asynchronously through curl, so Neovim stays usable while the
+model responds. Tokens that arrive together are drawn in one update. The
+plugin file does not load the Lua modules until the first command or mapping.
+
+The selection is sent to whatever `base_url` is configured. Do not select
+secrets you do not want that server to see.
+
+ vim:tw=78:ts=8:ft=help:norl:

@@ -1,0 +1,8 @@
+:Aski	aski.txt	/*:Aski*
+<Plug>(AskiAsk)	aski.txt	/*<Plug>(AskiAsk)*
+aski	aski.txt	/*aski*
+aski-notes	aski.txt	/*aski-notes*
+aski-setup	aski.txt	/*aski-setup*
+aski-usage	aski.txt	/*aski-usage*
+aski.txt	aski.txt	/*aski.txt*
+g:aski_no_mappings	aski.txt	/*g:aski_no_mappings*
